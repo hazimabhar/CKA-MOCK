@@ -1,0 +1,1 @@
+Create and phpmyadmin deployment and service use phpmyadmin:latest image which gets its "PMA_HOST" as an environmental variable from the service name from the previous question 

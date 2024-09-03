@@ -1,0 +1,6 @@
+Create a deployment of nginx with the image of nginx of version 1.18-alpine. Now upgrade the version to 1.19-alpine and record it. Now roll back the deployment to the previous version.
+
+
+k create deployment nginx-deployment --image=nginx:1.18-alpine
+k set image deployments/nginx-deployment nginx=nginx:1.19-alpine
+k rollout undo deployment nginx-deployment 

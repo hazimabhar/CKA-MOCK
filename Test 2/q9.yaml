@@ -1,0 +1,16 @@
+# Create a manifest file to launch a myservice pod with an image of nginx on the worker node automatically. 
+# Any manifest files should be placed in 
+
+# cd /etc/kubernetes/manifest
+# nano myservice.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myservice
+spec:
+  nodeName: node01 # schedule pod to specific node
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent

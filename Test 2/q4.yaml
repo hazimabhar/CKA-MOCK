@@ -1,0 +1,20 @@
+Create a new user use RABC in your Kubenetes cluster and give it a power to create, get, logs, and describe the pods
+
+
+
+openssl genrsa -out hazim.key 2048
+
+openssl req -new -key hazim.key -out hazim.csr -subj "/CN=hazim/O=dev/O=example.org"
+
+openssl x509 -req -CA  /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -days 730 -in hazim.csr -out hazim.crt
+kubectl config set-credentials hazim --client-certificate=hazim.crt --client-key=hazim.key
+kubectl config set-context hazim-kubernetes --cluster=kubernetes --user=hazim --namespace=default
+kubectl config get-contexts
+
+
+kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
+kubectl create clusterrolebinding pod-reader --clusterrole=pod-reader --user=hazim --group=dev
+
+k config use-context hazim-kubernetes
+
+k get nodes(will get error)

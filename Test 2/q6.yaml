@@ -1,0 +1,14 @@
+# Create a pod of jenkins with the image jenkins in the namespace of web-frontend
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jenkins
+  namespace: web-frontend
+spec:
+  containers:
+  - name: jenkins
+    image: jenkins/jenkins:lts-jdk17
+    ports:
+    - containerPort: 80
