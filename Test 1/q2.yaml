@@ -1,0 +1,32 @@
+# Create a new  deployment name lab-deployment in the qq2 namespace. With one replica in the manifest then scale the deployment to 4 replicas.
+ 
+# k create deployment lab-deployment --image=nginx --replicas=1 -n qq2 --dry-run -o yaml > lab-deployment.yaml
+# run this command: k apply -f lab-deployment.yaml
+# run this command: k autoscale deployment lab-deployment --min=4 --max=4 -n qq2
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: lab-deployment
+  name: lab-deployment
+  namespace: qq2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lab-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: lab-deployment
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}

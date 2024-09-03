@@ -1,0 +1,63 @@
+# Create ConfigMap name it q5 and Secret name credentials in the default namespace.
+
+# The secret file should contain username and password 
+
+# The config map does not need to have any certain data but it should be functional
+
+# Create a pod named apache using the httpd image in the default namespace containing the following:
+
+# Environment variable named CONTENT containing the key content from the  q5   ConfigMap 
+# Environment variable named USERNAME containing the key username from the credentials Secret 
+# Environment variable named PASSWORD containing the key password from the credentials Secret
+
+# Answer: 
+# k create configmap q5 --from-literal=CONTENT=q4 --dry-run -o yaml > configmap.yaml
+# k create secret generic credentials --from-literal=USERNAME=admin --from-literal=PASSWORD=1234 --dry-run -o yaml > secret.yaml
+# kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml --dry-run -o yaml > apache.yaml
+# add 
+# envFrom:
+# - configMapRef:
+#     name: q5
+# - secretRef:
+#     name: credentials
+
+apiVersion: v1
+data:
+  CONTENT: q4
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: q5
+
+---
+
+apiVersion: v1
+data:
+  PASSWORD: MTIzNA==
+  USERNAME: YWRtaW4=
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: credentials
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"nginx","namespace":"default"},"spec":{"containers":[{"image":"nginx:1.14.2","name":"nginx","ports":[{"container>
+  name: nginx
+  namespace: default
+spec:
+  containers:
+  - image: nginx:1.14.2
+    name: nginx
+    ports:
+    - containerPort: 80
+    envFrom:
+    - configMapRef:
+        name: q5
+    - secretRef:
+        name: credentials

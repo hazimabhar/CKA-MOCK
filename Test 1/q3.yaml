@@ -1,0 +1,31 @@
+# Create a deployment names nginx-deployment in the qq3 namespace. Perform a rolling update to the deployment by setting the image to nginx:alpine.
+
+# create namespace: k create ns qq3
+# run this command: k create deployment nginx-deployment --image=nginx:latest --replicas=1 -n qq3 --dry-run -o yaml > nginx-deployment.yaml
+# run this command: kubectl set image deployments/nginx-deployment nginx=nginx:alpine -n qq3
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-deployment
+  name: nginx-deployment
+  namespace: qq3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-deployment
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+        resources: {}
+status: {}

@@ -1,0 +1,61 @@
+# Create a new Deployment named cloud-app01 in the ca2 namespace consisting of 2 replicas. 
+# The deployment should use image nginx:1.23.3-alpine. 
+# Create a new Service resource named cloud-app-svc to expose the cloud-app01 deployment on port 80 in the same namespace. 
+# Finally use the following kubectl run command to spin up a utility pod which tests HTTP connectivity through the new service. 
+# Confirm that the following command returns an HTTP 200 response code:
+
+# kubectl run -n ca2 -i --tty --restart=Never --rm netutil --image cloudacademydevops/networkutils:v2 -- curl -I cloud-app-svc
+
+
+# k create deployment cloud-app01 -n ca2 --replicas=2 --image=nginx:1.23.3-alpine --dry-run -o yaml > cloud-app01.yaml
+# k create svc clusterip cloud-app-svc --tcp=80:80 -n ca2 --selector=app=cloud-app01 --dry-run -o yaml > cloud-app-svc.yaml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cloud-app01
+  name: cloud-app01
+  namespace: ca2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloud-app01
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cloud-app01
+    spec:
+      containers:
+      - image: nginx:1.23.3-alpine
+        name: nginx
+        resources: {}
+status: {}
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cloud-app-svc
+  name: cloud-app-svc
+  namespace: ca2
+spec:
+  ports:
+  - name: 80-80
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: cloud-app01  
+  type: NodePort
+status:
+  loadBalancer: {}

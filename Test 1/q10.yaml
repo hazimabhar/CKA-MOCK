@@ -1,0 +1,38 @@
+# Create a PersistentVolume named pv in the qq3 Namespace. The PersistentVolume must be configured with the following settings:
+
+# storageClassName: gp21Gi of storage capacity
+# allow a single Node read-write access
+# use a hostPath of /mnt/data
+# The PersistentVolume must be claimed by a PersistentVolumeClaim named pvc. The PersistentVolume must request 1Gi of storage capacity.
+
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv
+  namespace: qq3
+  labels:
+    type: local
+spec:
+  storageClassName: gp21gi
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc 
+  namespace: qq3
+spec:
+  storageClassName: gp21gi
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

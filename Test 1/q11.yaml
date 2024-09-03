@@ -1,0 +1,29 @@
+# Create a Pod named pod with one nginx container in the qq2 namespace. 
+# The Pod must use the podpvc PersistentVolumeClaim to mount a volume at /data. The pod must have read-only access to the pvc. 
+
+# copy pod yaml from official documentation 
+# then add :
+#           readOnly: true
+
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod
+  namespace: qq2
+spec:
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: podpvc
+  containers:
+    - name: nginx-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/data"
+          name: task-pv-storage
+          readOnly: true

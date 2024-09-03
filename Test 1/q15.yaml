@@ -1,0 +1,8 @@
+Q15:
+Create a new deployment name apache-deployment with an image of caleed httpd:latest in the qq3 namespace. 
+Perform rolling update to the image httpd:bookworm and then a rollback of the deployment to restore the original image.
+
+create namespace qq3
+run this command: k create  deployment apache-deployment --image=httpd:latest -n qq3
+run this command: k set image deployments/apache-deployment httpd=httpd:bookworm -n qq3
+run this command: k rollout undo deployments/apache-deployment -n qq3

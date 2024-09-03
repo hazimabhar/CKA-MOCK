@@ -1,0 +1,119 @@
+# Create a Deployment named web in the ca1 namespace with an image of nginx:latest. Create a new Service named web-svc that sits in front of this deployment. 
+# Expose the new service publicly by creating an Ingress resource named web-app. 
+# The Ingress's host field must be set to the host key value stored in an existing ConfigMap named webapp-host-fqdn, also located in the ca1 namespace. 
+# All changes should be performed in the ca1 namespace. The following settings must also be used for the Ingress resource:
+
+# Name: web
+# Annotations: nginx.ingress.kubernetes.io/rewrite-target: /
+# path: /
+# pathType: Prefix
+
+
+# k create deployment web -n ca1 --image=nginx:latest --port=80 --dry-run -o yaml > web.yaml
+
+# k create svc clusterip web-svc --tcp=80:80 -n ca1 --dry-run -o yaml > web-svc.yaml
+# adjust the selector to 
+#     selector:
+#       app: web
+
+# k create ingress web-app --rule="web-app.com/bar=web-svc:80" -n ca1 --dry-run -o yaml > web-app.yaml
+# change 
+# metadata:
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#   name: web
+#         path: /   
+#         pathType: Prefix
+        
+
+# k create configmap webapp-host-fqdn --from-literal=host=web-app.com -n ca1 --dry-run -o yaml > web-cm.yaml
+
+# curl http://web-app.com/
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web
+  name: web
+  namespace: ca1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: web
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web-svc
+  name: web-svc
+  namespace: ca1
+spec:
+  ports:
+  - name: 80-80
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: web
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  creationTimestamp: null
+  name: web    
+  namespace: ca1
+spec:
+  rules:
+  - host: web-app.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: web-svc
+            port:
+              number: 80
+        path: /   
+        pathType: Prefix
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: v1
+data:
+  host: web-app.com
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: webapp-host-fqdn
+  namespace: ca1

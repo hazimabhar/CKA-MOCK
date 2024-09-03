@@ -1,0 +1,38 @@
+# Create a pod named limit using the redis image in the qq3 namespace with the following resource limits and requests:
+
+# Requests
+# CPU: 0.5
+# Memory: 500Mi
+# Limits
+# CPU: 1
+# Memory: 1Gi
+
+# copy pod yaml from documenttation and change it name and use redis image and add namespace
+# add:
+# resources:
+#   requests:
+#     memory: "500Mi"
+#     cpu: "500m"
+#   limits:
+#     memory: "1000Mi"
+#     cpu: "1000m"
+# k apply -f redis.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: limit
+  namespace: qq3
+spec:
+  containers:
+  - image: redis:latest
+    name: redis
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        memory: "500Mi"
+        cpu: "500m"
+      limits:
+        memory: "1000Mi"
+        cpu: "1000m"

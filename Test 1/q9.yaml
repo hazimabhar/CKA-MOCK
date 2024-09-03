@@ -1,0 +1,19 @@
+# Create a StorageClass named class configured with the following settings:
+
+# kubernetes.io/aws-ebs provisioner 
+# gp2 volume type
+# retain Reclaim policy
+# do not allow for volume expansion
+
+---
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+provisioner: rancher.io/local-path
+reclaimPolicy: Retain
+allowVolumeExpansion: false
+parameters:
+  volumeType: gp2
+volumeBindingMode: WaitForFirstConsumer

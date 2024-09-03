@@ -1,0 +1,62 @@
+# Execute the following requirements in the prod namespace.
+# Create a new Deployment named app01 using the nginx:latest container image and have it listen on port 80. 
+# The deployment should consist of 2 replicas. 
+# Create a new Service named app01-svc and expose the newly created deployment using a NodePort. 
+# Confirm that you can access the nginx home (index) page using the NodePort service.
+
+
+# k create deployment app01 -n prod --image=nginx:latest --port=80 --replicas=2 --dry-run -o yaml > app01.yaml
+
+# k create svc nodeport app01-svc --tcp=80:80 -n prod --selector=app=app01 --dry-run -o yaml > app01-svc.yaml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app01
+  name: app01
+  namespace: prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app01
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: app01
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app01-svc
+  name: app01-svc
+  namespace: prod
+spec:
+  ports:
+  - name: 80-80
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: app01    
+  type: NodePort
+status:
+  loadBalancer: {}
